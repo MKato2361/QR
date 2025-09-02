@@ -1,181 +1,181 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>QRコード表示</title>
-  <meta name="theme-color" content="#ffffff" />
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
-  <link rel="icon" href="./icons/icon-512.png" sizes="512x512">
-  <style>
-    body { 
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; 
-      margin: 0; 
-      padding: 1rem; 
-      background: #f9fafb; 
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    .header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    
-    h1 { 
-      font-size: 1.5rem; 
-      margin-bottom: 1rem; 
-      color: #1f2937;
-    }
-    
-    .qr-display {
-      display: grid;
-      gap: 2rem;
-      width: 100%;
-      max-width: 800px;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    }
-    
-    .qr-item {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      text-align: center;
-      border: 1px solid #e5e7eb;
-    }
-    
-    .qr-label {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      color: #374151;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #e5e7eb;
-    }
-    
-    .qr-container {
-      margin: 1rem 0;
-      display: flex;
-      justify-content: center;
-    }
-    
-    .qr-info {
-      font-size: 0.9rem;
-      color: #6b7280;
-      margin-top: 1rem;
-      word-break: break-all;
-      background: #f3f4f6;
-      padding: 0.5rem;
-      border-radius: 6px;
-    }
-    
-    .controls {
-      margin-top: 2rem;
-      text-align: center;
-    }
-    
-    button {
-      padding: 0.8rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      margin: 0 0.5rem;
-      font-size: 1rem;
-    }
-    
-    .btn-back {
-      background: #6b7280;
-      color: white;
-    }
-    
-    .btn-back:hover {
-      background: #4b5563;
-    }
-    
-    .btn-print {
-      background: #0ea5e9;
-      color: white;
-    }
-    
-    .btn-print:hover {
-      background: #0284c7;
-    }
-
-    .btn-pdf {
-      background: #dc2626;
-      color: white;
-    }
-
-    .btn-pdf:hover {
-      background: #b91c1c;
-    }
-    
-    .empty-state {
-      text-align: center;
-      color: #6b7280;
-      font-style: italic;
-      grid-column: 1 / -1;
-    }
-    
-    /* 印刷用スタイル */
-    @media print {
-      body {
-        background: white;
-        padding: 0;
-      }
-      
-      .header h1 {
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-      }
-      
-      .controls {
-        display: none;
-      }
-      
-      .qr-display {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-        max-width: none;
-      }
-      
-      .qr-item {
-        box-shadow: none;
-        border: 1px solid #ddd;
-        page-break-inside: avoid;
-      }
-    }
-    
-    @media (max-width: 640px) {
-      .qr-display {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>QRコード表示</title>
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
+  <link rel="icon" href="./icons/icon-512.png" sizes="512x512">
+  <style>
+    body { 
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; 
+      margin: 0; 
+      padding: 1rem; 
+      background: #f9fafb; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    h1 { 
+      font-size: 1.5rem; 
+      margin-bottom: 1rem; 
+      color: #1f2937;
+    }
+    
+    .qr-display {
+      display: grid;
+      gap: 2rem;
+      width: 100%;
+      max-width: 800px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    .qr-item {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      text-align: center;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .qr-label {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #374151;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .qr-container {
+      margin: 1rem 0;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .qr-info {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-top: 1rem;
+      word-break: break-all;
+      background: #f3f4f6;
+      padding: 0.5rem;
+      border-radius: 6px;
+    }
+    
+    .controls {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    
+    button {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0 0.5rem;
+      font-size: 1rem;
+    }
+    
+    .btn-back {
+      background: #6b7280;
+      color: white;
+    }
+    
+    .btn-back:hover {
+      background: #4b5563;
+    }
+    
+    .btn-print {
+      background: #0ea5e9;
+      color: white;
+    }
+    
+    .btn-print:hover {
+      background: #0284c7;
+    }
+    
+    .btn-pdf {
+      background: #dc2626;
+      color: white;
+    }
+    
+    .btn-pdf:hover {
+      background: #b91c1c;
+    }
+    
+    .empty-state {
+      text-align: center;
+      color: #6b7280;
+      font-style: italic;
+      grid-column: 1 / -1;
+    }
+    
+    /* 印刷用スタイル */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      
+      .header h1 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+      }
+      
+      .controls {
+        display: none;
+      }
+      
+      .qr-display {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        max-width: none;
+      }
+      
+      .qr-item {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .qr-display {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="header">
-    <h1>QRコード表示</h1>
-  </div>
-
-  <div class="qr-display" id="qr-display">
-    </div>
-
-  <div class="controls">
-    <button class="btn-back" onclick="history.back()">戻る</button>
-    <button class="btn-print" onclick="window.print()">印刷</button>
-    <button class="btn-pdf" onclick="generatePDF()">PDF出力</button>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-  <script>
+  <div class="header">
+    <h1>QRコード表示</h1>
+  </div>
+  
+  <div class="qr-display" id="qr-display">
+  </div>
+  
+  <div class="controls">
+    <button class="btn-back" onclick="history.back()">戻る</button>
+    <button class="btn-print" onclick="window.print()">印刷</button>
+    <button class="btn-pdf" onclick="generatePDF()">PDF出力</button>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script>
     // URLパラメータとlocalStorageからデータを取得する関数
     function getQrData() {
       const urlParams = new URLSearchParams(window.location.search);
@@ -214,42 +214,42 @@
       }
       return qrData;
     }
-     
-    // QRコード生成関数（CDN版のqrcode-generatorライブラリ用）
-    function createQRCode(text, size, ec, container) {
-      if (!text || !text.trim()) return false;
-      
-      try {
-        // 誤り訂正レベルの変換
-        const errorCorrectionLevel = {
-          'L': 'L',
-          'M': 'M', 
-          'Q': 'Q',
-          'H': 'H'
-        }[ec] || 'M';
-        
-        // QRコード生成
-        const qr = qrcode(0, errorCorrectionLevel);
-        qr.addData(text.trim());
-        qr.make();
-        
-        // サイズ計算
-        const cellSize = Math.floor(parseInt(size, 10) / qr.getModuleCount());
-        const margin = Math.floor(cellSize * 0.5);
-        
-        // SVGとして生成
-        const svg = qr.createSvgTag(cellSize, margin);
-        container.innerHTML = svg;
-        
-        return true;
-      } catch (error) {
-        console.error('QRコード生成エラー:', error);
-        container.innerHTML = '<div style="color: #ef4444;">QRコード生成に失敗しました</div>';
-        return false;
-      }
-    }
-    
-    // QRコード表示関数
+    
+    // QRコード生成関数（CDN版のqrcode-generatorライブラリ用）
+    function createQRCode(text, size, ec, container) {
+      if (!text || !text.trim()) return false;
+      
+      try {
+        // 誤り訂正レベルの変換
+        const errorCorrectionLevel = {
+          'L': 'L',
+          'M': 'M', 
+          'Q': 'Q',
+          'H': 'H'
+        }[ec] || 'M';
+        
+        // QRコード生成
+        const qr = qrcode(0, errorCorrectionLevel);
+        qr.addData(text.trim());
+        qr.make();
+        
+        // サイズ計算
+        const cellSize = Math.floor(parseInt(size, 10) / qr.getModuleCount());
+        const margin = Math.floor(cellSize * 0.5);
+        
+        // SVGとして生成
+        const svg = qr.createSvgTag(cellSize, margin);
+        container.innerHTML = svg;
+        
+        return true;
+      } catch (error) {
+        console.error('QRコード生成エラー:', error);
+        container.innerHTML = '<div style="color: #ef4444;">QRコード生成に失敗しました</div>';
+        return false;
+      }
+    }
+    
+    // QRコード表示関数
     function displayQRCodes() {
       const display = document.getElementById('qr-display');
       let hasQR = false;
@@ -304,49 +304,49 @@
         display.innerHTML = '<div class="empty-state">表示するQRコードがありません。<br>前のページに戻ってQRコードを生成してください。</div>';
       }
     }
-    
-    // PDF生成関数
-    function generatePDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('p', 'mm', 'a4');
-      const items = document.querySelectorAll('.qr-item');
-      const pdfWidth = doc.internal.pageSize.getWidth();
-      let yOffset = 10; // ページの開始位置
-
-      // QRコード要素を一つずつキャプチャ
-      const promises = Array.from(items).map(item => html2canvas(item, { scale: 2, useCORS: true }));
-
-      // すべてのキャプチャが完了したらPDFを生成
-      Promise.all(promises).then(canvases => {
-        canvases.forEach((canvas, index) => {
-          const imgData = canvas.toDataURL('image/png');
-          const imgWidth = pdfWidth - 20; // 左右に余白を設ける
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-          // ページに収まらない場合は新しいページを追加
-          if (index > 0 && yOffset + imgHeight > doc.internal.pageSize.getHeight() - 10) {
-            doc.addPage();
-            yOffset = 10;
-          }
-
-          doc.addImage(imgData, 'PNG', 10, yOffset, imgWidth, imgHeight);
-          yOffset += imgHeight + 10;
-        });
-
-        doc.save('qr-codes.pdf');
-      }).catch(error => {
-        console.error('PDF生成エラー:', error);
-        alert('PDF生成に失敗しました。');
-      });
-    }
-
-    // ページ読み込み時にQRコードを表示
-    document.addEventListener('DOMContentLoaded', displayQRCodes);
-    
-    // Service Worker登録
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(console.error);
-    }
-  </script>
+    
+    // PDF生成関数
+    function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const items = document.querySelectorAll('.qr-item');
+      const pdfWidth = doc.internal.pageSize.getWidth();
+      let yOffset = 10; // ページの開始位置
+    
+      // QRコード要素を一つずつキャプチャ
+      const promises = Array.from(items).map(item => html2canvas(item, { scale: 2, useCORS: true }));
+    
+      // すべてのキャプチャが完了したらPDFを生成
+      Promise.all(promises).then(canvases => {
+        canvases.forEach((canvas, index) => {
+          const imgData = canvas.toDataURL('image/png');
+          const imgWidth = pdfWidth - 20; // 左右に余白を設ける
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    
+          // ページに収まらない場合は新しいページを追加
+          if (index > 0 && yOffset + imgHeight > doc.internal.pageSize.getHeight() - 10) {
+            doc.addPage();
+            yOffset = 10;
+          }
+    
+          doc.addImage(imgData, 'PNG', 10, yOffset, imgWidth, imgHeight);
+          yOffset += imgHeight + 10;
+        });
+    
+        doc.save('qr-codes.pdf');
+      }).catch(error => {
+        console.error('PDF生成エラー:', error);
+        alert('PDF生成に失敗しました。');
+      });
+    }
+    
+    // ページ読み込み時にQRコードを表示
+    document.addEventListener('DOMContentLoaded', displayQRCodes);
+    
+    // Service Worker登録
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(console.error);
+    }
+  </script>
 </body>
 </html>
