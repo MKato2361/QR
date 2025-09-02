@@ -3,176 +3,123 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>QR Maker PWA</title>
+  <title>QRコード生成PWA</title>
+  <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#0ea5e9" />
+  <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
+  <link rel="icon" href="./icons/icon-512.png" sizes="512x512">
   <style>
-    body { font-family: system-ui, sans-serif; margin:0; }
-    header { padding:16px; background:#0ea5e9; color:#fff; }
-    main { padding:16px; max-width:960px; margin:auto; }
-    .card { background:#fff; border:1px solid #ccc; padding:16px; border-radius:16px; margin-bottom:16px; }
-    label { font-size:.9rem; display:block; margin-bottom:6px; }
-    input, select { width:100%; padding:8px; border:1px solid #aaa; border-radius:8px; }
-    button { padding:10px 14px; border-radius:10px; border:0; cursor:pointer; }
-    .primary { background:#0ea5e9; color:#fff; }
-    .ghost { background:transparent; border:1px solid #aaa; }
-    .qr-wrap { display:grid; place-items:center; min-height:220px; padding:16px; border:1px dashed #aaa; border-radius:16px; background:#fafafa; }
-    .row { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:12px; }
-    .row > div { flex:1 1 180px; }
-    h2 { font-size:1.1rem; margin:0 0 12px; }
-    footer { text-align:center; font-size:.8rem; color:gray; margin:24px 0 12px; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; margin: 0; padding: 1rem; background: #f9fafb; }
+    h1 { font-size: 1.5rem; text-align: center; margin-bottom: 1rem; }
+    .qr-card { background: white; padding: 1rem; margin-bottom: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .qr-card h2 { font-size: 1.1rem; margin-top: 0; }
+    label { display: block; margin-top: 0.5rem; font-size: 0.9rem; }
+    input, select { width: 100%; padding: 0.5rem; margin-top: 0.2rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+    button { margin-top: 0.8rem; padding: 0.6rem 1rem; border: none; border-radius: 8px; background: #0ea5e9; color: white; font-weight: 600; cursor: pointer; }
+    .qrcode { margin-top: 1rem; text-align: center; }
   </style>
   <script defer src="./qrcode.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1 style="margin:0;font-size:1.25rem;">QR Maker PWA</h1>
-    <div style="opacity:.85;font-size:.9rem;">2つのQRコードを生成できます</div>
-  </header>
-  <main>
-    <!-- QRコード1 -->
-    <div class="card">
-      <h2>QRコード1</h2>
-      <div class="row">
-        <div>
-          <label for="label1">名前</label>
-          <input id="label1" type="text" placeholder="例: 会場入口" />
-        </div>
-        <div>
-          <label for="text1">テキスト / URL</label>
-          <input id="text1" type="text" placeholder="例: https://example.com" />
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label for="size1">サイズ(px)</label>
-          <select id="size1">
-            <option>192</option><option selected>256</option><option>320</option><option>384</option>
-          </select>
-        </div>
-        <div>
-          <label for="ec1">誤り訂正</label>
-          <select id="ec1">
-            <option value="L">L</option>
-            <option value="M" selected>M</option>
-            <option value="Q">Q</option>
-            <option value="H">H</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <button class="primary" id="btn-gen1">生成</button>
-        <button class="ghost" id="btn-clear1">クリア</button>
-        <button class="ghost" id="btn-save1">PNG保存</button>
-      </div>
-      <div class="qr-wrap">
-        <div id="qrcode1"></div>
-      </div>
-    </div>
+  <h1>QRコード生成 PWA</h1>
 
-    <!-- QRコード2 -->
-    <div class="card">
-      <h2>QRコード2</h2>
-      <div class="row">
-        <div>
-          <label for="label2">名前</label>
-          <input id="label2" type="text" placeholder="例: 受付カウンター" />
-        </div>
-        <div>
-          <label for="text2">テキスト / URL</label>
-          <input id="text2" type="text" placeholder="例: Wi-Fi:SSID=..." />
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label for="size2">サイズ(px)</label>
-          <select id="size2">
-            <option>192</option><option selected>256</option><option>320</option><option>384</option>
-          </select>
-        </div>
-        <div>
-          <label for="ec2">誤り訂正</label>
-          <select id="ec2">
-            <option value="L">L</option>
-            <option value="M" selected>M</option>
-            <option value="Q">Q</option>
-            <option value="H">H</option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <button class="primary" id="btn-gen2">生成</button>
-        <button class="ghost" id="btn-clear2">クリア</button>
-        <button class="ghost" id="btn-save2">PNG保存</button>
-      </div>
-      <div class="qr-wrap">
-        <div id="qrcode2"></div>
-      </div>
-    </div>
+  <div class="qr-card">
+    <h2>QR1</h2>
+    <label>ラベル</label>
+    <input id="label1" placeholder="例: 名刺QR">
+    <label>内容</label>
+    <input id="text1" placeholder="URLやテキスト">
+    <label>サイズ</label>
+    <select id="size1">
+      <option value="256">256x256</option>
+      <option value="384">384x384</option>
+      <option value="512" selected>512x512</option>
+    </select>
+    <label>誤り訂正</label>
+    <select id="ec1">
+      <option value="L">L (低)</option>
+      <option value="M" selected>M (中)</option>
+      <option value="Q">Q (高)</option>
+      <option value="H">H (最高)</option>
+    </select>
+    <button id="btn-gen1">生成</button>
+    <div id="qrcode1" class="qrcode"></div>
+  </div>
 
-    <footer>© Your Name</footer>
-  </main>
+  <div class="qr-card">
+    <h2>QR2</h2>
+    <label>ラベル</label>
+    <input id="label2" placeholder="例: Wi-Fi QR">
+    <label>内容</label>
+    <input id="text2" placeholder="URLやテキスト">
+    <label>サイズ</label>
+    <select id="size2">
+      <option value="256">256x256</option>
+      <option value="384">384x384</option>
+      <option value="512" selected>512x512</option>
+    </select>
+    <label>誤り訂正</label>
+    <select id="ec2">
+      <option value="L">L (低)</option>
+      <option value="M" selected>M (中)</option>
+      <option value="Q">Q (高)</option>
+      <option value="H">H (最高)</option>
+    </select>
+    <button id="btn-gen2">生成</button>
+    <div id="qrcode2" class="qrcode"></div>
+  </div>
 
   <script>
-    // 共通関数
-    function generateQR(text, size, ec, targetEl) {
-      if (!text.trim()) { alert("テキスト/URLを入力してください"); return; }
-      targetEl.innerHTML = "";
-      new QRCode(targetEl, {
-        text,
+    // 共通関数: 画面内にQRを生成
+    function generateQR(text, size, ec, target) {
+      target.innerHTML = "";
+      if (!text.trim()) {
+        target.textContent = "入力してください";
+        return;
+      }
+      new QRCode(target, {
+        text: text,
         width: parseInt(size,10),
         height: parseInt(size,10),
-        correctLevel: QRCode.CorrectLevel[ec]
+        correctLevel: QRCode.CorrectLevel[ec] || QRCode.CorrectLevel.M
       });
     }
 
-    function saveQR(targetEl, filename) {
-      const canvas = targetEl.querySelector("canvas");
-      const img = targetEl.querySelector("img");
-      let dataURL;
-      if (canvas) {
-        dataURL = canvas.toDataURL("image/png");
-      } else if (img) {
-        dataURL = img.src;
-      } else { alert("QRコードがありません"); return; }
-      const a = document.createElement("a");
-      a.href = dataURL;
-      a.download = filename;
-      a.click();
+    // 専用表示ページを開く
+    function openQRView(label, text, size, ec) {
+      const params = new URLSearchParams({
+        label: label || "",
+        text: text || "",
+        size: size || "512",
+        ec: ec || "M"
+      });
+      window.open(`./qrview.html?${params.toString()}`, "_blank", "noopener");
     }
 
-    // QR1
-    const q1 = document.getElementById("qrcode1");
+    // QR1のボタン
     document.getElementById("btn-gen1").addEventListener("click", () => {
       const label = document.getElementById("label1").value || "QR1";
       const text = document.getElementById("text1").value;
       const size = document.getElementById("size1").value;
       const ec = document.getElementById("ec1").value;
-      generateQR(text, size, ec, q1);
-      if (label) q1.setAttribute("data-label", label);
-    });
-    document.getElementById("btn-clear1").addEventListener("click", () => { q1.innerHTML=""; });
-    document.getElementById("btn-save1").addEventListener("click", () => {
-      const label = document.getElementById("label1").value || "qr1";
-      saveQR(q1, label + ".png");
+      generateQR(text, size, ec, document.getElementById("qrcode1"));
+      openQRView(label, text, size, ec);
     });
 
-    // QR2
-    const q2 = document.getElementById("qrcode2");
+    // QR2のボタン
     document.getElementById("btn-gen2").addEventListener("click", () => {
       const label = document.getElementById("label2").value || "QR2";
       const text = document.getElementById("text2").value;
       const size = document.getElementById("size2").value;
       const ec = document.getElementById("ec2").value;
-      generateQR(text, size, ec, q2);
-      if (label) q2.setAttribute("data-label", label);
+      generateQR(text, size, ec, document.getElementById("qrcode2"));
+      openQRView(label, text, size, ec);
     });
-    document.getElementById("btn-clear2").addEventListener("click", () => { q2.innerHTML=""; });
-    document.getElementById("btn-save2").addEventListener("click", () => {
-      const label = document.getElementById("label2").value || "qr2";
-      saveQR(q2, label + ".png");
-    });
+
+    // PWA用 Service Worker 登録
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(console.error);
+    }
   </script>
 </body>
 </html>
-
