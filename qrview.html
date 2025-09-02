@@ -280,21 +280,32 @@
     
     // PDF生成関数
     function generatePDF() {
-      const element = document.getElementById('qr-display');
-      
-      const pdfWidth = 210;
-      const pdfHeight = 297;
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const items = document.querySelectorAll('.qr-item');
+      const pdfWidth = doc.internal.pageSize.getWidth();
+      let yOffset = 10; // ページの開始位置
 
-      html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const imgWidth = pdfWidth;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('p', 'mm', 'a4');
-        
-        doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-        
+      // QRコード要素を一つずつキャプチャ
+      const promises = Array.from(items).map(item => html2canvas(item, { scale: 2, useCORS: true }));
+
+      // すべてのキャプチャが完了したらPDFを生成
+      Promise.all(promises).then(canvases => {
+        canvases.forEach((canvas, index) => {
+          const imgData = canvas.toDataURL('image/png');
+          const imgWidth = pdfWidth - 20; // 左右に余白を設ける
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          // ページに収まらない場合は新しいページを追加
+          if (index > 0 && yOffset + imgHeight > doc.internal.pageSize.getHeight() - 10) {
+            doc.addPage();
+            yOffset = 10;
+          }
+
+          doc.addImage(imgData, 'PNG', 10, yOffset, imgWidth, imgHeight);
+          yOffset += imgHeight + 10;
+        });
+
         doc.save('qr-codes.pdf');
       }).catch(error => {
         console.error('PDF生成エラー:', error);
