@@ -14,7 +14,6 @@
     .qr-block { margin: 2rem 0; }
     .qrcode { margin-top: 1rem; }
   </style>
-  <script defer src="./qrcode.min.js"></script>
 </head>
 <body>
   <h1>QRコード表示</h1>
@@ -29,6 +28,7 @@
     <div id="qrcode2" class="qrcode"></div>
   </div>
 
+  <script defer src="qrcode.min.js"></script>
   <script>
     function generateQR(text, size, ec, target) {
       target.innerHTML = "";
@@ -64,4 +64,3 @@
   </script>
 </body>
 </html>
-
