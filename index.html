@@ -76,40 +76,51 @@
   <script>
     // ローカルストレージにデータを保存する関数
     function saveToLocalStorage() {
-      const qrData = {
-        qr1: {
-          label: document.getElementById("label1").value,
-          text: document.getElementById("text1").value,
-          size: document.getElementById("size1").value,
-          ec: document.getElementById("ec1").value
-        },
-        qr2: {
-          label: document.getElementById("label2").value,
-          text: document.getElementById("text2").value,
-          size: document.getElementById("size2").value,
-          ec: document.getElementById("ec2").value
-        }
-      };
-      localStorage.setItem('qr-codes-data', JSON.stringify(qrData));
+      try {
+        const qrData = {
+          qr1: {
+            label: document.getElementById("label1").value,
+            text: document.getElementById("text1").value,
+            size: document.getElementById("size1").value,
+            ec: document.getElementById("ec1").value
+          },
+          qr2: {
+            label: document.getElementById("label2").value,
+            text: document.getElementById("text2").value,
+            size: document.getElementById("size2").value,
+            ec: document.getElementById("ec2").value
+          }
+        };
+        // JSON.stringifyが失敗する可能性を考慮
+        localStorage.setItem('qr-codes-data', JSON.stringify(qrData));
+      } catch (e) {
+        console.error("Failed to save to localStorage:", e);
+      }
     }
 
     // ローカルストレージからデータを読み込み、フォームに反映する関数
     function loadFromLocalStorage() {
-      const storedData = localStorage.getItem('qr-codes-data');
-      if (storedData) {
-        const qrData = JSON.parse(storedData);
-        if (qrData.qr1) {
-          document.getElementById("label1").value = qrData.qr1.label;
-          document.getElementById("text1").value = qrData.qr1.text;
-          document.getElementById("size1").value = qrData.qr1.size;
-          document.getElementById("ec1").value = qrData.qr1.ec;
+      try {
+        const storedData = localStorage.getItem('qr-codes-data');
+        if (storedData) {
+          const qrData = JSON.parse(storedData);
+          if (qrData.qr1) {
+            document.getElementById("label1").value = qrData.qr1.label;
+            document.getElementById("text1").value = qrData.qr1.text;
+            document.getElementById("size1").value = qrData.qr1.size;
+            document.getElementById("ec1").value = qrData.qr1.ec;
+          }
+          if (qrData.qr2) {
+            document.getElementById("label2").value = qrData.qr2.label;
+            document.getElementById("text2").value = qrData.qr2.text;
+            document.getElementById("size2").value = qrData.qr2.size;
+            document.getElementById("ec2").value = qrData.qr2.ec;
+          }
         }
-        if (qrData.qr2) {
-          document.getElementById("label2").value = qrData.qr2.label;
-          document.getElementById("text2").value = qrData.qr2.text;
-          document.getElementById("size2").value = qrData.qr2.size;
-          document.getElementById("ec2").value = qrData.qr2.ec;
-        }
+      } catch (e) {
+        console.error("Failed to load from localStorage:", e);
+        // localStorageのデータが壊れている場合は削除して初期化
+        localStorage.removeItem('qr-codes-data');
       }
     }
     
@@ -120,7 +131,6 @@
         target.textContent = "入力してください";
         return;
       }
-      // qrcode.min.jsのライブラリを使用
       new QRCode(target, {
         text: text,
         width: parseInt(size,10),
@@ -132,35 +142,34 @@
     // ページロード時にlocalStorageからデータを読み込む
     window.addEventListener('load', loadFromLocalStorage);
 
-    // フォーム入力時にlocalStorageに保存
+    // フォーム入力時にlocalStorageに自動保存
     const allInputs = document.querySelectorAll('input, select');
     allInputs.forEach(input => {
-      input.addEventListener('change', saveToLocalStorage);
-      input.addEventListener('keyup', saveToLocalStorage);
+      input.addEventListener('input', saveToLocalStorage);
     });
 
     // QR1生成
     document.getElementById("btn-gen1").addEventListener("click", () => {
-      saveToLocalStorage(); // 生成ボタンクリック時にも保存
       const text = document.getElementById("text1").value;
       const size = document.getElementById("size1").value;
       const ec = document.getElementById("ec1").value;
       generateQR(text, size, ec, document.getElementById("qrcode1"));
+      saveToLocalStorage();
     });
 
     // QR2生成
     document.getElementById("btn-gen2").addEventListener("click", () => {
-      saveToLocalStorage(); // 生成ボタンクリック時にも保存
       const text = document.getElementById("text2").value;
       const size = document.getElementById("size2").value;
       const ec = document.getElementById("ec2").value;
       generateQR(text, size, ec, document.getElementById("qrcode2"));
+      saveToLocalStorage();
     });
 
     // 表示用画面に遷移
     document.getElementById("btn-view").addEventListener("click", () => {
-      saveToLocalStorage(); // 遷移前に必ず保存
-      window.location.href = `./qrview.html`; // URLパラメータは削除
+      saveToLocalStorage();
+      window.location.href = `./qrview.html`;
     });
 
     // PWA用 Service Worker 登録
