@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>QRコード生成</title>
+  <title>QRコード生成PWA</title>
   <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
@@ -30,7 +30,7 @@
     <input id="text1" placeholder="URLやテキスト">
     <label>サイズ</label>
     <select id="size1">
-      <option value="256"selected>256x256</option>
+      <option value="256" selected>256x256</option>
       <option value="384">384x384</option>
       <option value="512">512x512</option>
     </select>
@@ -71,7 +71,7 @@
   <div style="text-align:center; margin-top:2rem;">
     <button id="btn-view">選択したQRを表示</button>
   </div>
-
+  
   <script defer src="./qrcode.min.js"></script>
   <script>
     // 共通関数: 画面内にQRを生成
@@ -127,4 +127,3 @@
   </script>
 </body>
 </html>
-
