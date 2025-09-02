@@ -13,9 +13,8 @@
     h1 { font-size: 1.2rem; margin: 1rem 0; }
     .qr-block { margin: 2rem 0; }
     .qrcode { margin-top: 1rem; }
-    .download-btn {
-      display: none; /* 初期状態では非表示 */
-      margin-top: 1rem;
+    .action-buttons { margin-top: 2rem; }
+    .action-buttons button {
       padding: 0.6rem 1rem;
       border: none;
       border-radius: 8px;
@@ -23,6 +22,18 @@
       color: white;
       font-weight: 600;
       cursor: pointer;
+      margin: 0.5rem;
+    }
+
+    /* 印刷時のスタイル調整 */
+    @media print {
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      .action-buttons, h1, #download1, #download2 {
+        display: none; /* 印刷時に非表示にする要素 */
+      }
     }
   </style>
 </head>
@@ -32,86 +43,55 @@
   <div class="qr-block">
     <div id="label1"></div>
     <div id="qrcode1" class="qrcode"></div>
-    <button id="download1" class="download-btn">画像を保存</button>
   </div>
 
   <div class="qr-block">
     <div id="label2"></div>
     <div id="qrcode2" class="qrcode"></div>
-    <button id="download2" class="download-btn">画像を保存</button>
+  </div>
+  
+  <div class="action-buttons">
+    <button id="print-pdf-btn">PDFとして保存</button>
   </div>
 
   <script defer src="./qrcode.min.js"></script>
   <script>
-    function generateQR(text, size, ec, target, downloadButtonId, defaultLabel) {
+    function generateQR(text, size, ec, target) {
       target.innerHTML = "";
-      if (!text.trim()) {
-        document.getElementById(downloadButtonId).style.display = 'none';
-        return;
-      }
-      
-      const qrcode = new QRCode(target, {
+      if (!text.trim()) return;
+      new QRCode(target, {
         text: text,
         width: parseInt(size, 10),
         height: parseInt(size, 10),
         correctLevel: QRCode.CorrectLevel[ec] || QRCode.CorrectLevel.M
       });
-      
-      // QRコードが生成された後にダウンロードボタンを表示
-      const downloadButton = document.getElementById(downloadButtonId);
-      downloadButton.style.display = 'inline-block';
-      
-      // ダウンロード機能
-      downloadButton.onclick = () => {
-        // qrcode.jsが生成するimgまたはcanvas要素を取得
-        const qrCanvas = target.querySelector('canvas');
-        const qrImg = target.querySelector('img');
-
-        if (qrCanvas) {
-            const imageData = qrCanvas.toDataURL("image/png");
-            const a = document.createElement('a');
-            a.href = imageData;
-            a.download = (defaultLabel || 'qr_code') + '.png';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        } else if (qrImg) {
-            const a = document.createElement('a');
-            a.href = qrImg.src;
-            a.download = (defaultLabel || 'qr_code') + '.png';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-      };
     }
 
     // URLパラメータから取得
     const params = new URLSearchParams(window.location.search);
 
     // QR1
-    const label1 = params.get("label1") || "";
-    document.getElementById("label1").textContent = label1;
+    document.getElementById("label1").textContent = params.get("label1") || "";
     generateQR(
       params.get("text1") || "",
       params.get("size1") || "512",
       params.get("ec1") || "M",
-      document.getElementById("qrcode1"),
-      "download1",
-      label1
+      document.getElementById("qrcode1")
     );
 
     // QR2
-    const label2 = params.get("label2") || "";
-    document.getElementById("label2").textContent = label2;
+    document.getElementById("label2").textContent = params.get("label2") || "";
     generateQR(
       params.get("text2") || "",
       params.get("size2") || "512",
       params.get("ec2") || "M",
-      document.getElementById("qrcode2"),
-      "download2",
-      label2
+      document.getElementById("qrcode2")
     );
+
+    // PDFとして保存機能
+    document.getElementById("print-pdf-btn").addEventListener("click", () => {
+      window.print();
+    });
   </script>
 </body>
 </html>
