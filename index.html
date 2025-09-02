@@ -15,7 +15,7 @@
     .qr-card h2 { font-size: 1.1rem; margin-top: 0; }
     label { display: block; margin-top: 0.5rem; font-size: 0.9rem; }
     input, select { width: 100%; padding: 0.5rem; margin-top: 0.2rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
-    button { margin-top: 0.8rem; padding: 0.6rem 1rem; border: none; border-radius: 8px; background: #0ea5e9; color: white; font-weight: 600; cursor: pointer; }
+    button { margin-top: 0.8rem; padding: 0.6rem 1rem; border: none; border-radius: 8px; background: #0ea5e9; color: white; font-weight: 600; cursor: pointer; margin-right: 0.5rem; }
     .qrcode { margin-top: 1rem; text-align: center; }
   </style>
   <script defer src="./qrcode.min.js"></script>
@@ -69,6 +69,11 @@
     <div id="qrcode2" class="qrcode"></div>
   </div>
 
+  <!-- 表示用ボタン（2つまとめて専用画面へ） -->
+  <div style="text-align:center; margin-top:2rem;">
+    <button id="btn-view">選択したQRを表示</button>
+  </div>
+
   <script>
     // 共通関数: 画面内にQRを生成
     function generateQR(text, size, ec, target) {
@@ -85,35 +90,35 @@
       });
     }
 
-    // 専用表示ページを開く
-    function openQRView(label, text, size, ec) {
-      const params = new URLSearchParams({
-        label: label || "",
-        text: text || "",
-        size: size || "512",
-        ec: ec || "M"
-      });
-      window.open(`./qrview.html?${params.toString()}`, "_blank", "noopener");
-    }
-
-    // QR1のボタン
+    // QR1生成
     document.getElementById("btn-gen1").addEventListener("click", () => {
-      const label = document.getElementById("label1").value || "QR1";
       const text = document.getElementById("text1").value;
       const size = document.getElementById("size1").value;
       const ec = document.getElementById("ec1").value;
       generateQR(text, size, ec, document.getElementById("qrcode1"));
-      openQRView(label, text, size, ec);
     });
 
-    // QR2のボタン
+    // QR2生成
     document.getElementById("btn-gen2").addEventListener("click", () => {
-      const label = document.getElementById("label2").value || "QR2";
       const text = document.getElementById("text2").value;
       const size = document.getElementById("size2").value;
       const ec = document.getElementById("ec2").value;
       generateQR(text, size, ec, document.getElementById("qrcode2"));
-      openQRView(label, text, size, ec);
+    });
+
+    // 表示用画面に遷移
+    document.getElementById("btn-view").addEventListener("click", () => {
+      const params = new URLSearchParams({
+        label1: document.getElementById("label1").value,
+        text1: document.getElementById("text1").value,
+        size1: document.getElementById("size1").value,
+        ec1: document.getElementById("ec1").value,
+        label2: document.getElementById("label2").value,
+        text2: document.getElementById("text2").value,
+        size2: document.getElementById("size2").value,
+        ec2: document.getElementById("ec2").value,
+      });
+      window.location.href = `./qrview.html?${params.toString()}`;
     });
 
     // PWA用 Service Worker 登録
@@ -123,3 +128,4 @@
   </script>
 </body>
 </html>
+
