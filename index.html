@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>QRコード生成PWA</title>
+  <title>QRコード生成</title>
   <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
@@ -30,9 +30,9 @@
     <input id="text1" placeholder="URLやテキスト">
     <label>サイズ</label>
     <select id="size1">
-      <option value="256">256x256</option>
+      <option value="256"selected>256x256</option>
       <option value="384">384x384</option>
-      <option value="512" selected>512x512</option>
+      <option value="512">512x512</option>
     </select>
     <label>誤り訂正</label>
     <select id="ec1">
@@ -53,9 +53,9 @@
     <input id="text2" placeholder="URLやテキスト">
     <label>サイズ</label>
     <select id="size2">
-      <option value="256">256x256</option>
+      <option value="256" selected>256x256</option>
       <option value="384">384x384</option>
-      <option value="512" selected>512x512</option>
+      <option value="512">512x512</option>
     </select>
     <label>誤り訂正</label>
     <select id="ec2">
@@ -127,3 +127,4 @@
   </script>
 </body>
 </html>
+
