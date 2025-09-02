@@ -18,7 +18,6 @@
     button { margin-top: 0.8rem; padding: 0.6rem 1rem; border: none; border-radius: 8px; background: #0ea5e9; color: white; font-weight: 600; cursor: pointer; margin-right: 0.5rem; }
     .qrcode { margin-top: 1rem; text-align: center; }
   </style>
-  <script defer src="./qrcode.min.js"></script>
 </head>
 <body>
   <h1>QRコード生成 PWA</h1>
@@ -69,11 +68,11 @@
     <div id="qrcode2" class="qrcode"></div>
   </div>
 
-  <!-- 表示用ボタン（2つまとめて専用画面へ） -->
   <div style="text-align:center; margin-top:2rem;">
     <button id="btn-view">選択したQRを表示</button>
   </div>
 
+  <script defer src="./qrcode.min.js"></script>
   <script>
     // 共通関数: 画面内にQRを生成
     function generateQR(text, size, ec, target) {
@@ -128,4 +127,3 @@
   </script>
 </body>
 </html>
-
