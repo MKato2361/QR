@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>QRコード表示</title>
   <meta name="theme-color" content="#ffffff" />
-  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="manifest" href="manifest.webwebmanifest">
   <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
   <link rel="icon" href="./icons/icon-512.png" sizes="512x512">
   <style>
@@ -48,7 +48,7 @@
     document.getElementById("label1").textContent = params.get("label1") || "";
     generateQR(
       params.get("text1") || "",
-      params.get("size1") || "512",
+      params.get("size1") || "256",
       params.get("ec1") || "M",
       document.getElementById("qrcode1")
     );
@@ -57,7 +57,7 @@
     document.getElementById("label2").textContent = params.get("label2") || "";
     generateQR(
       params.get("text2") || "",
-      params.get("size2") || "512",
+      params.get("size2") || "256",
       params.get("ec2") || "M",
       document.getElementById("qrcode2")
     );
