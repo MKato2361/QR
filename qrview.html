@@ -3,84 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>QRコード生成PWA</title>
+  <title>QRコード表示</title>
   <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
   <link rel="icon" href="./icons/icon-512.png" sizes="512x512">
   <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; margin: 0; padding: 1rem; background: #f9fafb; }
-    h1 { font-size: 1.5rem; text-align: center; margin-bottom: 1rem; }
-    .qr-card { background: white; padding: 1rem; margin-bottom: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-    .qr-card h2 { font-size: 1.1rem; margin-top: 0; }
-    label { display: block; margin-top: 0.5rem; font-size: 0.9rem; }
-    input, select { width: 100%; padding: 0.5rem; margin-top: 0.2rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
-    button { margin-top: 0.8rem; padding: 0.6rem 1rem; border: none; border-radius: 8px; background: #0ea5e9; color: white; font-weight: 600; cursor: pointer; margin-right: 0.5rem; }
-    .qrcode { margin-top: 1rem; text-align: center; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; margin: 0; padding: 1rem; background: #fff; text-align: center; }
+    h1 { font-size: 1.2rem; margin: 1rem 0; }
+    .qr-block { margin: 2rem 0; }
+    .qrcode { margin-top: 1rem; }
   </style>
-  <script defer src="./qrcode.min.js"></script>
 </head>
 <body>
-  <h1>QRコード生成 PWA</h1>
+  <h1>QRコード表示</h1>
 
-  <div class="qr-card">
-    <h2>QR1</h2>
-    <label>ラベル</label>
-    <input id="label1" placeholder="例: 名刺QR">
-    <label>内容</label>
-    <input id="text1" placeholder="URLやテキスト">
-    <label>サイズ</label>
-    <select id="size1">
-      <option value="256" selected>256x256</option>
-      <option value="384">384x384</option>
-      <option value="512">512x512</option>
-    </select>
-    <label>誤り訂正</label>
-    <select id="ec1">
-      <option value="L">L (低)</option>
-      <option value="M" selected>M (中)</option>
-      <option value="Q">Q (高)</option>
-      <option value="H">H (最高)</option>
-    </select>
-    <button id="btn-gen1">生成</button>
+  <div class="qr-block">
+    <div id="label1"></div>
     <div id="qrcode1" class="qrcode"></div>
   </div>
 
-  <div class="qr-card">
-    <h2>QR2</h2>
-    <label>ラベル</label>
-    <input id="label2" placeholder="例: Wi-Fi QR">
-    <label>内容</label>
-    <input id="text2" placeholder="URLやテキスト">
-    <label>サイズ</label>
-    <select id="size2">
-      <option value="256" selected>256x256</option>
-      <option value="384">384x384</option>
-      <option value="512">512x512</option>
-    </select>
-    <label>誤り訂正</label>
-    <select id="ec2">
-      <option value="L">L (低)</option>
-      <option value="M" selected>M (中)</option>
-      <option value="Q">Q (高)</option>
-      <option value="H">H (最高)</option>
-    </select>
-    <button id="btn-gen2">生成</button>
+  <div class="qr-block">
+    <div id="label2"></div>
     <div id="qrcode2" class="qrcode"></div>
   </div>
 
-  <div style="text-align:center; margin-top:2rem;">
-    <button id="btn-view">選択したQRを表示</button>
-  </div>
-
+  <script defer src="./qrcode.min.js"></script>
   <script>
-    // 共通関数: 画面内にQRを生成
     function generateQR(text, size, ec, target) {
       target.innerHTML = "";
-      if (!text.trim()) {
-        target.textContent = "入力してください";
-        return;
-      }
+      if (!text.trim()) return;
       new QRCode(target, {
         text: text,
         width: parseInt(size,10),
@@ -89,41 +41,26 @@
       });
     }
 
-    // QR1生成
-    document.getElementById("btn-gen1").addEventListener("click", () => {
-      const text = document.getElementById("text1").value;
-      const size = document.getElementById("size1").value;
-      const ec = document.getElementById("ec1").value;
-      generateQR(text, size, ec, document.getElementById("qrcode1"));
-    });
+    // URLパラメータから取得
+    const params = new URLSearchParams(window.location.search);
 
-    // QR2生成
-    document.getElementById("btn-gen2").addEventListener("click", () => {
-      const text = document.getElementById("text2").value;
-      const size = document.getElementById("size2").value;
-      const ec = document.getElementById("ec2").value;
-      generateQR(text, size, ec, document.getElementById("qrcode2"));
-    });
+    // QR1
+    document.getElementById("label1").textContent = params.get("label1") || "";
+    generateQR(
+      params.get("text1") || "",
+      params.get("size1") || "512",
+      params.get("ec1") || "M",
+      document.getElementById("qrcode1")
+    );
 
-    // 表示用画面に遷移
-    document.getElementById("btn-view").addEventListener("click", () => {
-      const params = new URLSearchParams({
-        label1: document.getElementById("label1").value,
-        text1: document.getElementById("text1").value,
-        size1: document.getElementById("size1").value,
-        ec1: document.getElementById("ec1").value,
-        label2: document.getElementById("label2").value,
-        text2: document.getElementById("text2").value,
-        size2: document.getElementById("size2").value,
-        ec2: document.getElementById("ec2").value,
-      });
-      window.location.href = `./qrview.html?${params.toString()}`;
-    });
-
-    // PWA用 Service Worker 登録
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(console.error);
-    }
+    // QR2
+    document.getElementById("label2").textContent = params.get("label2") || "";
+    generateQR(
+      params.get("text2") || "",
+      params.get("size2") || "512",
+      params.get("ec2") || "M",
+      document.getElementById("qrcode2")
+    );
   </script>
 </body>
 </html>
