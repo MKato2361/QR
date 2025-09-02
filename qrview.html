@@ -3,121 +3,65 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>QR 表示</title>
+  <title>QRコード表示</title>
   <meta name="theme-color" content="#ffffff" />
   <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
+  <link rel="icon" href="./icons/icon-512.png" sizes="512x512">
   <style>
-    :root { background: #fff; color: #111; }
-    html,body { height:100%; margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; }
-    .container { min-height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:24px; box-sizing:border-box; }
-    .label { font-size:1.25rem; font-weight:600; text-align:center; word-break:break-word; max-width:95vw; }
-    .qr { display:grid; place-items:center; background: white; padding:12px; border-radius:16px; box-shadow: 0 4px 18px rgba(0,0,0,0.06); }
-    .controls { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-    button { padding:10px 14px; border-radius:10px; border:0; cursor:pointer; background:#0ea5e9; color:#fff; font-weight:600; }
-    .ghost { background:transparent; border:1px solid #ddd; color:#111; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; margin: 0; padding: 1rem; background: #fff; text-align: center; }
+    h1 { font-size: 1.2rem; margin: 1rem 0; }
+    .qr-block { margin: 2rem 0; }
+    .qrcode { margin-top: 1rem; }
   </style>
   <script defer src="./qrcode.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div id="label" class="label" aria-live="polite">ラベル</div>
-    <div id="qrwrap" class="qr" aria-label="QRコード領域" ></div>
-    <div class="controls">
-      <button id="save">PNG保存</button>
-      <button id="share" class="ghost">共有</button>
-      <button id="print" class="ghost">印刷</button>
-    </div>
+  <h1>QRコード表示</h1>
+
+  <div class="qr-block">
+    <div id="label1"></div>
+    <div id="qrcode1" class="qrcode"></div>
+  </div>
+
+  <div class="qr-block">
+    <div id="label2"></div>
+    <div id="qrcode2" class="qrcode"></div>
   </div>
 
   <script>
-    // URLパラメータを取得
-    const params = new URLSearchParams(location.search);
-    const label = params.get('label') || '';
-    const text = params.get('text') || '';
-    const size = parseInt(params.get('size') || '512', 10);
-    const ec = params.get('ec') || 'M';
-
-    const labelEl = document.getElementById('label');
-    const qrwrap = document.getElementById('qrwrap');
-
-    // ラベルをセット
-    labelEl.textContent = label;
-
-    // QRを生成
-    if (!text.trim()) {
-      qrwrap.textContent = '生成するコンテンツがありません';
-    } else {
-      // サイズに合わせて QR を生成（内側余白は少々）
-      qrwrap.innerHTML = '';
-      new QRCode(qrwrap, {
+    function generateQR(text, size, ec, target) {
+      target.innerHTML = "";
+      if (!text.trim()) return;
+      new QRCode(target, {
         text: text,
-        width: size,
-        height: size,
+        width: parseInt(size,10),
+        height: parseInt(size,10),
         correctLevel: QRCode.CorrectLevel[ec] || QRCode.CorrectLevel.M
       });
     }
 
-    // PNG保存
-    document.getElementById('save').addEventListener('click', () => {
-      const canvas = qrwrap.querySelector('canvas');
-      const img = qrwrap.querySelector('img');
-      let dataURL;
-      if (canvas) dataURL = canvas.toDataURL('image/png');
-      else if (img) dataURL = img.src;
-      else { alert('画像が取得できません'); return; }
-      const a = document.createElement('a');
-      // ラベルをファイル名に使う（不正な文字は置換）
-      const safeLabel = (label || 'qrcode').replace(/[\/\\?%*:|"<>]/g, '-');
-      a.href = dataURL;
-      a.download = safeLabel + '.png';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    });
+    // URLパラメータから取得
+    const params = new URLSearchParams(window.location.search);
 
-    // Web Share API（対応時）
-    document.getElementById('share').addEventListener('click', async () => {
-      try {
-        const canvas = qrwrap.querySelector('canvas');
-        const img = qrwrap.querySelector('img');
-        let blob;
-        if (canvas) {
-          blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-        } else if (img && img.src.startsWith('data:')) {
-          const resp = await fetch(img.src);
-          blob = await resp.blob();
-        }
-        if (!blob) throw new Error('blob作成失敗');
-        const file = new File([blob], (label || 'qrcode') + '.png', { type: 'image/png' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], title: label, text: text });
-        } else {
-          // 非対応なら保存へフォールバック
-          document.getElementById('save').click();
-        }
-      } catch (e) {
-        console.error(e);
-        document.getElementById('save').click();
-      }
-    });
+    // QR1
+    document.getElementById("label1").textContent = params.get("label1") || "";
+    generateQR(
+      params.get("text1") || "",
+      params.get("size1") || "512",
+      params.get("ec1") || "M",
+      document.getElementById("qrcode1")
+    );
 
-    // 印刷（QRのみを印刷）
-    document.getElementById('print').addEventListener('click', () => {
-      // 新規ウィンドウにラベル＋画像を簡素表示して印刷
-      const win = window.open('', '_blank');
-      const img = qrwrap.querySelector('canvas') ? qrwrap.querySelector('canvas').toDataURL('image/png') : (qrwrap.querySelector('img') || {}).src;
-      const safeLabel = label ? `<div style="text-align:center;font-size:20px;margin-bottom:12px">${label}</div>` : '';
-      win.document.write(`
-        <html><head><title>印刷 - ${label}</title>
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <style>body{display:flex;align-items:center;justify-content:center;height:100%;margin:0;padding:20px;font-family:system-ui;}img{max-width:100%;height:auto;}</style>
-        </head><body>${safeLabel}<img src="${img}" alt="QR"></body></html>
-      `);
-      win.document.close();
-      win.focus();
-      // 少し待ってから印刷ダイアログ
-      setTimeout(()=>{ win.print(); }, 300);
-    });
+    // QR2
+    document.getElementById("label2").textContent = params.get("label2") || "";
+    generateQR(
+      params.get("text2") || "",
+      params.get("size2") || "512",
+      params.get("ec2") || "M",
+      document.getElementById("qrcode2")
+    );
   </script>
 </body>
 </html>
+
