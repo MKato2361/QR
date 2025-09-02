@@ -19,15 +19,18 @@
       flex-direction: column;
       align-items: center;
     }
+    
     .header {
       text-align: center;
       margin-bottom: 2rem;
     }
+    
     h1 {
       font-size: 1.5rem;
       margin-bottom: 1rem;
       color: #1f2937;
     }
+    
     .qr-display {
       display: grid;
       gap: 2rem;
@@ -35,6 +38,7 @@
       max-width: 800px;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     }
+    
     .qr-item {
       background: white;
       padding: 1.5rem;
@@ -43,6 +47,7 @@
       text-align: center;
       border: 1px solid #e5e7eb;
     }
+    
     .qr-label {
       font-size: 1.2rem;
       font-weight: 600;
@@ -51,11 +56,13 @@
       padding-bottom: 0.5rem;
       border-bottom: 2px solid #e5e7eb;
     }
+    
     .qr-container {
       margin: 1rem 0;
       display: flex;
       justify-content: center;
     }
+    
     .qr-info {
       font-size: 0.9rem;
       color: #6b7280;
@@ -65,10 +72,12 @@
       padding: 0.5rem;
       border-radius: 6px;
     }
+    
     .controls {
       margin-top: 2rem;
       text-align: center;
     }
+    
     button {
       padding: 0.8rem 1.5rem;
       border: none;
@@ -78,57 +87,70 @@
       margin: 0 0.5rem;
       font-size: 1rem;
     }
+    
     .btn-back {
       background: #6b7280;
       color: white;
     }
+    
     .btn-back:hover {
       background: #4b5563;
     }
+    
     .btn-print {
       background: #0ea5e9;
       color: white;
     }
+    
     .btn-print:hover {
       background: #0284c7;
     }
+    
     .btn-pdf {
       background: #dc2626;
       color: white;
     }
+    
     .btn-pdf:hover {
       background: #b91c1c;
     }
+    
     .empty-state {
       text-align: center;
       color: #6b7280;
       font-style: italic;
       grid-column: 1 / -1;
     }
+    
     /* 印刷用スタイル */
     @media print {
       body {
         background: white;
         padding: 0;
       }
+      
       .header h1 {
         font-size: 1.2rem;
         margin-bottom: 1rem;
       }
+      
       .controls {
         display: none;
       }
+      
       .qr-display {
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
         max-width: none;
       }
+      
       .qr-item {
         box-shadow: none;
         border: 1px solid #ddd;
         page-break-inside: avoid;
       }
     }
+    
     @media (max-width: 640px) {
       .qr-display {
         grid-template-columns: 1fr;
@@ -140,27 +162,20 @@
   <div class="header">
     <h1>QRコード表示</h1>
   </div>
+  
   <div class="qr-display" id="qr-display">
   </div>
+  
   <div class="controls">
     <button class="btn-back" onclick="history.back()">戻る</button>
     <button class="btn-print" onclick="window.print()">印刷</button>
     <button class="btn-pdf" onclick="generatePDF()">PDF出力</button>
   </div>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
   <script>
-    // URLパラメータではなく、localStorageからデータを直接取得する関数
-    function getQrData() {
-      const storedData = localStorage.getItem('qr-codes-data');
-      if (storedData) {
-        return JSON.parse(storedData);
-      }
-      // データがない場合は空のオブジェクトを返す
-      return {};
-    }
-
     // QRコード生成関数（元のまま）
     function createQRCode(text, size, ec, container) {
       if (!text || !text.trim()) return false;
@@ -182,13 +197,41 @@
         return false;
       }
     }
-
+    
     // QRコード表示関数
     function displayQRCodes() {
       const display = document.getElementById('qr-display');
       let hasQR = false;
-      const qrData = getQrData();
-
+      let qrData = {};
+      const urlParams = new URLSearchParams(window.location.search);
+    
+      // URLパラメータからデータを取得し、localStorageに保存
+      if (urlParams.has('text1') || urlParams.has('text2')) {
+        if (urlParams.has('text1')) {
+          qrData.qr1 = {
+            label: urlParams.get('label1') || '',
+            text: urlParams.get('text1') || '',
+            size: urlParams.get('size1') || '256',
+            ec: urlParams.get('ec1') || 'M'
+          };
+        }
+        if (urlParams.has('text2')) {
+          qrData.qr2 = {
+            label: urlParams.get('label2') || '',
+            text: urlParams.get('text2') || '',
+            size: urlParams.get('size2') || '256',
+            ec: urlParams.get('ec2') || 'M'
+          };
+        }
+        localStorage.setItem('qr-codes-data', JSON.stringify(qrData));
+      } else {
+        // パラメータがない場合、localStorageからデータを読み込む
+        const storedData = localStorage.getItem('qr-codes-data');
+        if (storedData) {
+          qrData = JSON.parse(storedData);
+        }
+      }
+    
       // QR1の処理
       if (qrData.qr1 && qrData.qr1.text.trim()) {
         const { label, text, size, ec } = qrData.qr1;
@@ -209,7 +252,7 @@
           hasQR = true;
         }
       }
-
+    
       // QR2の処理
       if (qrData.qr2 && qrData.qr2.text.trim()) {
         const { label, text, size, ec } = qrData.qr2;
@@ -230,13 +273,13 @@
           hasQR = true;
         }
       }
-
+    
       // QRコードが1つも生成されなかった場合
       if (!hasQR) {
         display.innerHTML = '<div class="empty-state">表示するQRコードがありません。<br>前のページに戻ってQRコードを生成してください。</div>';
       }
     }
-
+    
     // PDF生成関数（元のまま）
     function generatePDF() {
       const { jsPDF } = window.jspdf;
@@ -263,10 +306,10 @@
         alert('PDF生成に失敗しました。');
       });
     }
-
+    
     // ページ読み込み時にQRコードを表示
     document.addEventListener('DOMContentLoaded', displayQRCodes);
-
+    
     // Service Worker登録
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(console.error);
