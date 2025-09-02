@@ -9,58 +9,266 @@
   <link rel="icon" href="./icons/icon-192.png" sizes="192x192">
   <link rel="icon" href="./icons/icon-512.png" sizes="512x512">
   <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; margin: 0; padding: 1rem; background: #fff; text-align: center; }
-    h1 { font-size: 1.2rem; margin: 1rem 0; }
-    .qr-block { margin: 2rem 0; }
-    .qrcode { margin-top: 1rem; }
+    body { 
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; 
+      margin: 0; 
+      padding: 1rem; 
+      background: #f9fafb; 
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    h1 { 
+      font-size: 1.5rem; 
+      margin-bottom: 1rem; 
+      color: #1f2937;
+    }
+    
+    .qr-display {
+      display: grid;
+      gap: 2rem;
+      width: 100%;
+      max-width: 800px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    
+    .qr-item {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      text-align: center;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .qr-label {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #374151;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .qr-container {
+      margin: 1rem 0;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .qr-info {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-top: 1rem;
+      word-break: break-all;
+      background: #f3f4f6;
+      padding: 0.5rem;
+      border-radius: 6px;
+    }
+    
+    .controls {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    
+    button {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 0 0.5rem;
+      font-size: 1rem;
+    }
+    
+    .btn-back {
+      background: #6b7280;
+      color: white;
+    }
+    
+    .btn-back:hover {
+      background: #4b5563;
+    }
+    
+    .btn-print {
+      background: #0ea5e9;
+      color: white;
+    }
+    
+    .btn-print:hover {
+      background: #0284c7;
+    }
+    
+    .empty-state {
+      text-align: center;
+      color: #6b7280;
+      font-style: italic;
+      grid-column: 1 / -1;
+    }
+    
+    /* 印刷用スタイル */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      
+      .header h1 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+      }
+      
+      .controls {
+        display: none;
+      }
+      
+      .qr-display {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        max-width: none;
+      }
+      
+      .qr-item {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        page-break-inside: avoid;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .qr-display {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>QRコード表示</h1>
-
-  <div class="qr-block">
-    <div id="label1"></div>
-    <div id="qrcode1" class="qrcode"></div>
+  <div class="header">
+    <h1>QRコード表示</h1>
   </div>
 
-  <div class="qr-block">
-    <div id="label2"></div>
-    <div id="qrcode2" class="qrcode"></div>
+  <div class="qr-display" id="qr-display">
+    <!-- QRコードがここに表示されます -->
+  </div>
+
+  <div class="controls">
+    <button class="btn-back" onclick="history.back()">戻る</button>
+    <button class="btn-print" onclick="window.print()">印刷</button>
   </div>
 
   <script defer src="./qrcode.min.js"></script>
   <script>
-    function generateQR(text, size, ec, target) {
-      target.innerHTML = "";
-      if (!text.trim()) return;
-      new QRCode(target, {
-        text: text,
-        width: parseInt(size,10),
-        height: parseInt(size,10),
-        correctLevel: QRCode.CorrectLevel[ec] || QRCode.CorrectLevel.M
-      });
+    // URLパラメータを取得
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // QRコード生成関数
+    function createQRCode(text, size, ec, container) {
+      if (!text || !text.trim()) return false;
+      
+      try {
+        new QRCode(container, {
+          text: text.trim(),
+          width: parseInt(size, 10),
+          height: parseInt(size, 10),
+          correctLevel: QRCode.CorrectLevel[ec] || QRCode.CorrectLevel.M,
+          colorDark: "#000000",
+          colorLight: "#ffffff"
+        });
+        return true;
+      } catch (error) {
+        console.error('QRコード生成エラー:', error);
+        container.innerHTML = '<div style="color: #ef4444;">QRコード生成に失敗しました</div>';
+        return false;
+      }
     }
-
-    // URLパラメータから取得
-    const params = new URLSearchParams(window.location.search);
-
-    // QR1
-    document.getElementById("label1").textContent = params.get("label1") || "";
-    generateQR(
-      params.get("text1") || "",
-      params.get("size1") || "512",
-      params.get("ec1") || "M",
-      document.getElementById("qrcode1")
-    );
-
-    // QR2
-    document.getElementById("label2").textContent = params.get("label2") || "";
-    generateQR(
-      params.get("text2") || "",
-      params.get("size2") || "512",
-      params.get("ec2") || "M",
-      document.getElementById("qrcode2")
-    );
+    
+    // QRコード表示関数
+    function displayQRCodes() {
+      const display = document.getElementById('qr-display');
+      let hasQR = false;
+      
+      // QR1の処理
+      const label1 = urlParams.get('label1') || '';
+      const text1 = urlParams.get('text1') || '';
+      const size1 = urlParams.get('size1') || '256';
+      const ec1 = urlParams.get('ec1') || 'M';
+      
+      if (text1.trim()) {
+        const qrItem1 = document.createElement('div');
+        qrItem1.className = 'qr-item';
+        qrItem1.innerHTML = `
+          <div class="qr-label">${label1 || 'QR1'}</div>
+          <div class="qr-container" id="qr1-container"></div>
+          <div class="qr-info">
+            <div><strong>内容:</strong> ${text1}</div>
+            <div><strong>サイズ:</strong> ${size1}x${size1}</div>
+            <div><strong>誤り訂正:</strong> ${ec1}</div>
+          </div>
+        `;
+        display.appendChild(qrItem1);
+        
+        // QRコード生成
+        const container1 = document.getElementById('qr1-container');
+        if (createQRCode(text1, size1, ec1, container1)) {
+          hasQR = true;
+        }
+      }
+      
+      // QR2の処理
+      const label2 = urlParams.get('label2') || '';
+      const text2 = urlParams.get('text2') || '';
+      const size2 = urlParams.get('size2') || '256';
+      const ec2 = urlParams.get('ec2') || 'M';
+      
+      if (text2.trim()) {
+        const qrItem2 = document.createElement('div');
+        qrItem2.className = 'qr-item';
+        qrItem2.innerHTML = `
+          <div class="qr-label">${label2 || 'QR2'}</div>
+          <div class="qr-container" id="qr2-container"></div>
+          <div class="qr-info">
+            <div><strong>内容:</strong> ${text2}</div>
+            <div><strong>サイズ:</strong> ${size2}x${size2}</div>
+            <div><strong>誤り訂正:</strong> ${ec2}</div>
+          </div>
+        `;
+        display.appendChild(qrItem2);
+        
+        // QRコード生成
+        const container2 = document.getElementById('qr2-container');
+        if (createQRCode(text2, size2, ec2, container2)) {
+          hasQR = true;
+        }
+      }
+      
+      // QRコードが1つも生成されなかった場合
+      if (!hasQR) {
+        display.innerHTML = '<div class="empty-state">表示するQRコードがありません。<br>前のページに戻ってQRコードを生成してください。</div>';
+      }
+    }
+    
+    // ページ読み込み時にQRコードを表示
+    window.addEventListener('load', () => {
+      // QRCodeライブラリの読み込み完了を待つ
+      if (typeof QRCode !== 'undefined') {
+        displayQRCodes();
+      } else {
+        // ライブラリが読み込まれるまで少し待つ
+        setTimeout(displayQRCodes, 100);
+      }
+    });
+    
+    // Service Worker登録
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(console.error);
+    }
   </script>
 </body>
 </html>
